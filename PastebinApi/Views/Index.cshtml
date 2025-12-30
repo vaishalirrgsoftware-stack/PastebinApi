@@ -1,0 +1,15 @@
+﻿<textarea id="t"></textarea>
+<button onclick="go()">Create</button>
+<p id="r"></p>
+
+<script>
+    async function go() {
+     const res = await fetch("BACKEND_URL/api/paste", {
+       method:"POST",
+       headers:{ "Content-Type":"application/json" },
+       body: JSON.stringify({ content: t.value })
+     });
+     const d = await res.json();
+     r.innerText = BACKEND_URL + "/api/paste/" + d.id;
+    }
+</script>
