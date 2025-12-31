@@ -1,19 +1,19 @@
-# Use official .NET SDK image
+# ---------- BUILD STAGE ----------
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# Copy csproj and restore
-COPY *.csproj ./
-RUN dotnet restore
+# copy csproj from subfolder
+COPY PastebinApi/PastebinApi.csproj PastebinApi/
+RUN dotnet restore PastebinApi/PastebinApi.csproj
 
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
+# copy everything else
+COPY . .
+WORKDIR /src/PastebinApi
 
-# Runtime image
+RUN dotnet publish -c Release -o /app/publish
+
+# ---------- RUNTIME STAGE ----------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app/out .
-EXPOSE 8080
-
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "PastebinApi.dll"]
